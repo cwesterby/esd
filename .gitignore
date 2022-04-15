@@ -8,4 +8,5 @@ old/
 # ignore the following files
 errors.json
 sermons.json
-
+.DS_Store
+.gitignore
