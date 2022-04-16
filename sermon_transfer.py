@@ -7,7 +7,7 @@ import pprint
 # Variables
 # xml url and file name to save 
 url = 'https://www.emmanuelwimbledon.org.uk/Media/MediaXML.xml?fid=2775'
-xml_file_name = 'feed.xml'
+xml_file_name = 'output/feed.xml'
 
 # sermon dictionary - used to upload data to squarespace
 sermon_dict = {}
@@ -79,13 +79,17 @@ def report_error_log():
 
 # download the file and remane
 def get_sermon_audio(url, item_id):
+    file_name = 'media/' + item_id + '.mp3'
     try:
-        r = requests.get(url, allow_redirects=True)
-        file_name = item_id + '.mp3'
-        open(file_name, 'wb').write(r.content)
+        f = open(xml_file_name)
+        print("media file already exists")
     except:
-        num = get_next_error_counter()
-        error_log[num] = {item_id: "could not download and save file"}
+        try:
+            r = requests.get(url, allow_redirects=True)
+            open(file_name, 'wb').write(r.content)
+        except:
+            num = get_next_error_counter()
+            error_log[num] = {item_id: "could not download and save file"}
 
 
 def add_sermon_entry(sermon_dict, counter, data):
@@ -103,8 +107,8 @@ def add_sermon_entry(sermon_dict, counter, data):
 
     url = str_exists('@file_base_path',data['file'], data['@item_id']) + str_exists('@file_name',data['file'], data['@item_id'])
     item_id = str_exists('@item_id', data, data['@item_id'])
-    if counter <= 0:
-        get_sermon_audio(url, item_id)
+    print("sermon entry " + item_id + "complete, now starting audio")
+    get_sermon_audio(url, item_id)
 
 
 def saving_file(filename, data):
@@ -162,5 +166,5 @@ for x in range(len(data1)):
 # print("Total size of all files is {} GB".format(round(file_size / 1073741824)))
 # print("from {} files".format(file_count))
 
-saving_file("sermons.json", sermon_dict)
-saving_file("errors.json", error_log)
+saving_file("output/sermons.json", sermon_dict)
+saving_file("output/errors.json", error_log)
