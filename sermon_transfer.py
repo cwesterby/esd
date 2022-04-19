@@ -80,10 +80,9 @@ def report_error_log():
 # download the file and remane
 def get_sermon_audio(url, item_id):
     file_name = 'media/' + item_id + '.mp3'
-    try:
-        f = open(xml_file_name)
-        print("media file already exists")
-    except:
+    if open(xml_file_name):
+        print("media file ("+ file_name +") already exists")
+    else:
         try:
             r = requests.get(url, allow_redirects=True)
             open(file_name, 'wb').write(r.content)
